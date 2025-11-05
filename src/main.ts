@@ -1,14 +1,10 @@
-// Import the 'express' module
-import express from 'express';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
-const app = express();
-
-const port = 3000;
-
-app.get('/', (req, res) => {
-    res.send('Hello, TypeScript + Node.js + Express!');
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
+    app.enableCors();
+    app.setGlobalPrefix('/api/v1');
+    await app.listen(3000);
+}
+bootstrap();
