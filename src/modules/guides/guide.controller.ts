@@ -1,0 +1,36 @@
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import { GuideService } from "./guide.service";
+import { AuthGuard } from "../auth/guards/auth.guard";
+import { ApiBearerAuth } from "@nestjs/swagger";
+import { CurrentUser } from "../../decorators/current-user";
+import { JwtPayload } from "src/interfaces/jwtPayload.interface";
+import { CreateGuideDto } from "./dtos/requests/create-guide-request.dto";
+import { GetGuideResponseDto } from "./dtos/responses/get-event-response.dto";
+import { MessageDto } from "../dtos/message.dto";
+
+@Controller('/user/:userId/guide/')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
+export class GuideController {
+    constructor(private readonly guideService: GuideService) { }
+
+    @Post('')
+    public async createGuide(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Body() createGuideDto: CreateGuideDto): Promise<GetGuideResponseDto> {
+        return this.guideService.createGuide(userPayload, userId, createGuideDto);
+    }
+
+    @Get('/:guideId')
+    public async getGuideById(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Param('guideId', ParseIntPipe) guideId: number): Promise<GetGuideResponseDto> {
+        return this.guideService.getGuideById(userPayload, userId, guideId);
+    }
+
+    @Get('')
+    public async getAllGuides(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number): Promise<GetGuideResponseDto[]> {
+        return this.guideService.getAllGuides(userPayload, userId);
+    }
+
+    @Delete('/:guideId')
+    public async deleteGuide(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Param('guideId', ParseIntPipe) guideId: number): Promise<MessageDto> {
+        return this.guideService.deleteGuide(userPayload, userId, guideId);
+    }
+}

@@ -5,6 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GuideModule } from './modules/guides/guide.module';
+import { Guide } from './modules/user/entities/guide.entity';
 
 @Module({
     imports: [
@@ -20,13 +22,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 database: configService.get('DATABASE_NAME'),
                 entities: [
                     User,
+                    Guide,
                 ],
                 synchronize: configService.get('DATABASE_SYNCHRONIZE') === 'true',
                 ssl: false,
             }),
             inject: [ConfigService],
         }),
-        AuthModule
+        AuthModule,
+        GuideModule
     ],
     controllers: [AppController],
     providers: [AppService],
