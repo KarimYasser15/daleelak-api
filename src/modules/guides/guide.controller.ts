@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { GuideService } from "./guide.service";
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { CurrentUser } from "../../decorators/current-user";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { CreateGuideDto } from "./dtos/requests/create-guide-request.dto";
-import { GetGuideResponseDto } from "./dtos/responses/get-event-response.dto";
+import { GetGuideResponseDto } from "./dtos/responses/get-guide-response.dto";
 import { MessageDto } from "../dtos/message.dto";
 
 @Controller('/user/:userId/guide/')
@@ -32,5 +32,14 @@ export class GuideController {
     @Delete('/:guideId')
     public async deleteGuide(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Param('guideId', ParseIntPipe) guideId: number): Promise<MessageDto> {
         return this.guideService.deleteGuide(userPayload, userId, guideId);
+    }
+
+    @Patch('/:guideId/upVote')
+    public async upVoteGuide(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Param('guideId', ParseIntPipe) guideId: number): Promise<GetGuideResponseDto> {
+        return this.guideService.upVoteGuide(userPayload, userId, guideId);
+    }
+    @Patch('/:guideId/downVote')
+    public async downVoteGuide(@CurrentUser() userPayload: JwtPayload, @Param('userId', ParseIntPipe) userId: number, @Param('guideId', ParseIntPipe) guideId: number): Promise<GetGuideResponseDto> {
+        return this.guideService.downVoteGuide(userPayload, userId, guideId);
     }
 }

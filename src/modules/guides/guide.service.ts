@@ -4,7 +4,7 @@ import { User } from "../user/entities/user.entity";
 import { Guide } from "../user/entities/guide.entity";
 import { Repository } from "typeorm";
 import { CreateGuideDto } from "./dtos/requests/create-guide-request.dto";
-import { GetGuideResponseDto } from "./dtos/responses/get-event-response.dto";
+import { GetGuideResponseDto } from "./dtos/responses/get-guide-response.dto";
 import { JwtPayload } from "src/interfaces/jwtPayload.interface";
 import { MessageDto } from "../dtos/message.dto";
 
@@ -79,5 +79,39 @@ export class GuideService {
         return {
             message: "Guide Deleted"
         };
+    }
+    public async upVoteGuide(userPayload: JwtPayload, userId: number, guideId: number): Promise<GetGuideResponseDto> {
+        if (userPayload.id !== userId) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+        const guide = await this.guideRepository.findOne({ where: { id: guideId } });
+
+        if (!guide) {
+            throw new NotFoundException("Guide Not Found");
+        }
+        guide.upVotes = guide.upVotes + 1;
+        const updatedGuide = await this.guideRepository.save(guide);
+        return GetGuideResponseDto.fromEntity(updatedGuide);
+    }
+    public async downVoteGuide(userPayload: JwtPayload, userId: number, guideId: number): Promise<GetGuideResponseDto> {
+        if (userPayload.id !== userId) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+        const guide = await this.guideRepository.findOne({ where: { id: guideId } });
+
+        if (!guide) {
+            throw new NotFoundException("Guide Not Found");
+        }
+        guide.downVotes = guide.downVotes - 1;
+        const updatedGuide = await this.guideRepository.save(guide);
+        return GetGuideResponseDto.fromEntity(updatedGuide);
     }
 }
