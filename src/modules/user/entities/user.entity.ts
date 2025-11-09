@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { Guide } from './guide.entity';
+import { GuideComment } from '../../guides/entities/guide-comment.entity';
 
 @Entity()
 export class User {
@@ -20,6 +21,9 @@ export class User {
 
     @OneToMany(() => Guide, (guide) => guide.createdBy, { eager: false })
     guides: Guide[];
+
+    @OneToMany(() => GuideComment, (comment) => comment.createdBy)
+    comments: GuideComment
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;

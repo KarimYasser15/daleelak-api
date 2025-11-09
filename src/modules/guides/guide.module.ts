@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../user/entities/user.entity";
 import { Guide } from "../user/entities/guide.entity";
+import { GuideComment } from "./entities/guide-comment.entity";
 
 @Module({
     imports: [
@@ -17,7 +18,7 @@ import { Guide } from "../user/entities/guide.entity";
             }),
             inject: [ConfigService],
         }),
-        TypeOrmModule.forFeature([User, Guide]),
+        TypeOrmModule.forFeature([User, Guide, GuideComment]),
     ],
     controllers: [GuideController],
     providers: [GuideService]
